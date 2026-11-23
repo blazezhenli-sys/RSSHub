@@ -1,21 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { config as ConfigType } from '@/config';
 
 import { route } from './lib/routes/facebook/search';
 
-vi.mock('@/config', async (importOriginal) => {
-    const original = await importOriginal<{ config: typeof ConfigType }>();
-    return {
-        ...original,
-        config: {
-            ...original.config,
-            facebook: {
-                ...original.config.facebook,
-                cookie: 'c_user=123; xs=test',
-            },
-        },
-    };
+import { config, setConfig } from './lib/config';
+
+const originalCookie = config.facebook.cookie;
+
+setConfig({ FACEBOOK_COOKIE: 'c_user=123; xs=test' });
+
+afterAll(() => {
+    setConfig({ FACEBOOK_COOKIE: originalCookie });
 });
 
 type Story = {
